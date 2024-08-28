@@ -1,0 +1,76 @@
+{
+    "menu": {
+        "data": [{
+            "label": "subsystem-management-api",
+            "data": {
+                "path": "doc-app?doc=subsystem-management-api/introduction"
+            },
+            "children": [{
+                    "id": "SM2",
+                    "label": "Concepts",
+                    "data": {
+                        "path": "doc-app?doc=subsystem-management-api/concept"
+                    }
+                },
+                {
+                    "id": "SM3",
+                    "label": "Developer guide",
+                    "data": {
+                        "path": "doc-app?doc=subsystem-management-api/developer-guide"
+                    },
+                    "children": [{
+                        "id": "SM3.1",
+                        "label": "Developer guide Adapter Links Controller",
+                        "data": {
+                            "path": "doc-app?doc=subsystem-management-api/developer-guide-adapter-links-controller"
+                        }
+                    },{
+                        "id": "SM3.2",
+                        "label": "Developer guide Connection Properties Controller",
+                        "data": {
+                            "path": "doc-app?doc=subsystem-management-api/developer-guide-connection-properties-controller"
+                        }
+                    },{
+                        "id": "SM3.3",
+                        "label": "Developer guide Subsystem Controller",
+                        "data": {
+                            "path": "doc-app?doc=subsystem-management-api/developer-guide-subsystem-controller"
+                        }
+                    },{
+                        "id": "SM3.4",
+                        "label": "Developer guide Subsystem Type Controller",
+                        "data": {
+                            "path": "doc-app?doc=subsystem-management-api/developer-guide-subsystem-type-controller"
+                        }
+                    },{
+                        "id": "SM3.5",
+                        "label": "Developer guide Subsystem Users Controller",
+                        "data": {
+                            "path": "doc-app?doc=subsystem-management-api/developer-guide-subsystem-users-controller"
+                        }
+                    },{
+                        "id": "SM3.6",
+                        "label": "Developer guide Tenant Mapping Controller",
+                        "data": {
+                            "path": "doc-app?doc=subsystem-management-api/developer-guide-tenant-mapping-controller"
+                        }
+                    }]
+                },
+                {
+                    "id": "SM4",
+                    "label": "Use cases",
+                    "data": {
+                        "path": "doc-app?doc=subsystem-management-api/use-case"
+                    }
+                },
+                {
+                    "id": "SM5",
+                    "label": "Dependencies",
+                    "data": {
+                        "path": "doc-app?doc=subsystem-management-api/dependencies"
+                    }
+                }
+            ]
+        }]
+    }
+}

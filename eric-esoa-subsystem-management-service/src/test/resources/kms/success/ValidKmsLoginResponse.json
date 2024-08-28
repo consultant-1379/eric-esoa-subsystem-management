@@ -1,0 +1,31 @@
+{
+  "request_id": "ed82c8f8-c1c4-4fd4-a7c9-fa8e5c13d4a2",
+  "lease_id": "",
+  "renewable": false,
+  "lease_duration": 0,
+  "data": {
+    "token": "s.WoCJJZdGuNJX9a1ozOvLUyO2"
+  },
+  "wrap_info": null,
+  "warnings": null,
+  "auth": {
+    "client_token": "s.XXkkkdkd0kdsdsdklsdsdsddsdsd",
+    "accessor": "0GH33k5k5k5k5kdkdkdsdsdsddsdsd",
+    "policies": [
+      "default",
+      "my-app-policy"
+    ],
+    "token_policies": [
+      "default",
+      "my-app-policy"
+    ],
+    "metadata": {
+      "role": "my-app-role"
+    },
+    "lease_duration": 2764800,
+    "renewable": true,
+    "entity_id": "",
+    "token_type": "service",
+    "orphan": false
+  }
+}

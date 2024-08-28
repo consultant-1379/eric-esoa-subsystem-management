@@ -1,0 +1,20 @@
+{
+  "total": 3,
+  "items": [
+    {
+      "id": 72,
+      "name": "auth3",
+      "url": "http://eric-eo-ecmsol005-stub"
+    },
+    {
+      "id": 82,
+      "name": "auth4",
+      "url": "http://eric-eo-ecmsol005-stub"
+    },
+    {
+      "id": 92,
+      "name": "auth5",
+      "url": "http://eric-eo-ecmsol005-stub"
+    }
+  ]
+}

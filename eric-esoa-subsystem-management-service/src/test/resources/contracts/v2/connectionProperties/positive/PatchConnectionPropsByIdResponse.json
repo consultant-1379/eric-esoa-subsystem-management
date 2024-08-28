@@ -1,0 +1,21 @@
+{
+    "id":"%pid",
+    "subsystemId":"%id",
+    "name":"connectionNew",
+    "tenant":"newtenant",
+    "username":"newusername",
+    "password":"CloudAdmin456",
+    "encryptedKeys":[
+        "password"
+    ],
+    "subsystemUsers":[
+        {
+            "id":5,
+            "connectionPropsId":3
+        },
+        {
+            "id":16,
+            "connectionPropsId":3
+        }
+    ]
+}

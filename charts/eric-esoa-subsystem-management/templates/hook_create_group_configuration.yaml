@@ -1,0 +1,108 @@
+#
+# COPYRIGHT Ericsson 2023-2024
+#
+#
+#
+# The copyright to the computer program(s) herein is the property of
+#
+# Ericsson Inc. The programs may be used and/or copied only with written
+#
+# permission from Ericsson Inc. or in accordance with the terms and
+#
+# conditions stipulated in the agreement/contract under which the
+#
+# program(s) have been supplied.
+#
+
+{{- if eq .Values.rbac.enabled true }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "eric-esoa-so-library-chart.name" . }}-create-subsystem-group-hook
+  labels:
+    {{- include "eric-esoa-so-library-chart.labels" .| nindent 4 }}
+  annotations:
+    {{- include "eric-esoa-so-library-chart.annotations" .| nindent 4 }}
+    "helm.sh/hook": post-install, post-upgrade, post-rollback
+    "helm.sh/hook-weight": "10"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+spec:
+  template:
+    metadata:
+      labels:
+        {{- include "eric-esoa-so-library-chart.labels" .| nindent 8 }}
+      annotations:
+        {{- include "eric-esoa-so-library-chart.annotations" .| nindent 8 }}
+    spec:
+      serviceAccountName: {{ template "eric-esoa-so-library-chart.name" . }}
+      terminationGracePeriodSeconds: {{ include "eric-esoa-so-library-chart.terminationGracePeriodSeconds" . }}
+      {{- if  .Values.imageCredentials.pullSecret }}
+      imagePullSecrets:
+        - name: {{ .Values.imageCredentials.pullSecret | quote }}
+      {{- else if .Values.global.pullSecret }}
+      imagePullSecrets:
+        - name: {{ .Values.global.pullSecret | quote }}
+      {{- end }}
+      restartPolicy: Never
+      containers:
+        - name: keycloak-client-subsystem-group
+          image: {{ template "eric-esoa-so-library-chart.imagePath" (dict "imageId" "iamClient" "values" .Values "files" .Files) }}
+          imagePullPolicy: {{ include "eric-esoa-subsystem-management.registryImagePullPolicy" . | quote }}
+          env:
+          - name: IAM_ADMIN_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.global.iam.adminSecret | quote }}
+                key: {{ .Values.global.iam.userKey | quote }}
+          - name: IAM_ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.global.iam.adminSecret | quote }}
+                key: {{ .Values.global.iam.passwordKey | quote }}
+          args:
+          - "create"
+          - "group"
+          - "--keycloak_hostname={{ .Values.global.hosts.iam }}"
+          - "--keycloak_user=$(IAM_ADMIN_USER)"
+          - "--keycloak_password=$(IAM_ADMIN_PASSWORD)"
+          - "--config=/config/subsystemgroupconfiguration.json"
+          volumeMounts:
+          - name: create-group-volume
+            mountPath: /config
+          - name: create-cacert-volume
+            mountPath: /mnt/certs
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 186362
+            capabilities:
+              drop:
+                - all
+          resources:
+            {{- with index .Values "resources" "keycloak-client" }}
+            {{ toYaml . | indent 12 | trim }}
+            {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations: {{- include "eric-esoa-so-library-chart.tolerations" . | indent 8 }}
+      {{- end }}
+      {{- if (index .Values "podPriority" "eric-esoa-subsystem-management" "priorityClassName") }}
+      priorityClassName: {{ (index .Values "podPriority" "eric-esoa-subsystem-management" "priorityClassName") | quote }}
+      {{- end }}
+      {{- if .Values.topologySpreadConstraints }}
+      topologySpreadConstraints: {{- include "eric-esoa-so-library-chart.topologySpreadConstraints" . | indent 8 }}
+      {{- end }}
+      nodeSelector: {{ include "eric-esoa-so-library-chart.nodeSelector" . | nindent 8 }}
+      volumes:
+      - name: create-group-volume
+        configMap:
+          name: {{ template "eric-esoa-so-library-chart.name" . }}-group-mapper-config
+          defaultMode: 0777
+      - name: create-cacert-volume
+        secret:
+          secretName: {{ .Values.global.iam.cacert.secretName }}
+          items:
+            - key: {{ .Values.global.iam.cacert.key }}
+              path: {{ .Values.global.iam.cacert.filePath }}
+{{- end -}}

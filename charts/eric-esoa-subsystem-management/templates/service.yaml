@@ -1,0 +1,49 @@
+#
+# COPYRIGHT Ericsson 2023-2024
+#
+#
+#
+# The copyright to the computer program(s) herein is the property of
+#
+# Ericsson Inc. The programs may be used and/or copied only with written
+#
+# permission from Ericsson Inc. or in accordance with the terms and
+#
+# conditions stipulated in the agreement/contract under which the
+#
+# program(s) have been supplied.
+#
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "eric-esoa-so-library-chart.name" . }}
+  labels:
+  {{- include "eric-esoa-so-library-chart.labels" .| nindent 4 }}
+  {{- include "eric-esoa-so-library-chart.bamPartofLabel" .| nindent 4 }}
+  annotations:
+  {{- include "eric-esoa-so-library-chart.annotations" .| nindent 4 }}
+  {{- include "eric-esoa-so-library-chart.bamDiscoveryAnnotation" .| nindent 4 }}
+
+spec:
+  ports:
+    {{- if eq (include "eric-esoa-so-library-chart.global-security-tls-enabled" .) "true" }}
+    - name: https
+      port: {{ .Values.service.port.https }}
+      targetPort: {{ .Values.port.https }}
+    - name: https-sm
+      port: {{ .Values.service.port.httpsSm }}
+      targetPort: {{ .Values.port.https }}
+    {{- else }}
+    - name: http
+      port: {{ .Values.service.port.http }}
+      targetPort: {{ .Values.port.http }}
+    {{- end }}
+  {{- if .Values.global }}
+  {{- if .Values.global.internalIPFamily }}
+  ipFamilies: [{{ .Values.global.internalIPFamily | quote }}]
+  {{- end }}
+  {{- end }}
+  selector:
+    app: {{ template "eric-esoa-so-library-chart.name" . }}

@@ -1,0 +1,210 @@
+#
+# COPYRIGHT Ericsson 2023-2024
+#
+#
+#
+# The copyright to the computer program(s) herein is the property of
+#
+# Ericsson Inc. The programs may be used and/or copied only with written
+#
+# permission from Ericsson Inc. or in accordance with the terms and
+#
+# conditions stipulated in the agreement/contract under which the
+#
+# program(s) have been supplied.
+#
+
+server:
+  address: 0.0.0.0
+  port: 8080
+  ssl:
+    port: 8443
+  namespace: ${NAMESPACE:default}
+  shutdown: graceful
+  max-http-request-header-size: ${SERVER_MAX_HTTP_HEADER_SIZE:15KB}
+
+client:
+  connectionTimeout: ${HTTP_CLIENT_CONNECTION_TIMEOUT:30}
+  readTimeout: ${HTTP_CLIENT_READ_TIMEOUT:30}
+
+---
+
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    health:
+      group:
+        liveness:
+          include:
+            - ping
+            - diskSpace
+            - livenessState
+        readiness:
+          include:
+            - db
+            - readinessState
+      probes:
+        enabled: true
+      show-details: always
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    enable:
+      jvm: true
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+      sla:
+        http:
+          server:
+            requests: 100ms, 300ms, 500ms
+  checkConnectivity:
+    cleanUpTimerPeriod: ${CLEANUP_TIMER_PERIOD:600}
+    reportAgeingTime: ${REPORT_AGEING_TIME:900}
+
+---
+
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: ${GRACEFUL_SHUTDOWN_TIMEOUT:60s}
+  task:
+    execution:
+      shutdown:
+        await-termination: true
+        await-termination-period: ${AWAIT_TERMINATION_PERIOD:60000}
+  datasource:
+    url: jdbc:${DB_VENDOR:postgresql}:${JDBC_URL://${DB_HOST:eric-esoa-subsystem-management-database-pg}:${DB_PORT:5432}/${DB_NAME:eric_esoa_common}?currentSchema=${SCHEMA_NAME:subsystem}${SSL_PARAMETERS:}}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
+    initialization-mode: always
+    hikari:
+      data-source-properties: stringtype=unspecified
+      minimumIdle: 5
+      maxLifetime: ${DB_CONNECTION_MAX_LIFETIME:840000}
+  flyway:
+    url: jdbc:postgresql:${JDBC_URL://${DB_HOST:eric-esoa-subsystem-management-database-pg}:${DB_PORT:5432}/${DB_NAME:eric_esoa_common}?currentSchema=${SCHEMA_NAME:subsystem}${SSL_PARAMETERS:}}
+    user: ${DB_USER:super}
+    password: ${DB_PASSWORD:super}
+    driver-class-name: org.postgresql.Driver
+    baselineOnMigrate: ${BASELINE_ON_MIGRATE:false}
+    out-of-order: true
+    validateOnMigrate: false
+
+  web:
+    resources:
+      add-mappings: false
+  mvc:
+    throw-exception-if-no-handler-found: true
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        id:
+          new_generator_mappings: false
+          db_structure_naming_strategy: legacy
+
+  cloud:
+    kubernetes:
+      reload:
+        enabled: true
+    vault:
+      enabled: true
+      host: ${VAULT_HOST:eric-sec-key-management}
+      port: ${VAULT_PORT:8200}
+      scheme: https
+      authentication: KUBERNETES
+      kubernetes:
+        role: ${VAULT_USER_ROLE:kms-crypto-role-eric-esoa-subsystem-management}
+        kubernetes-path: kubernetes
+        service-account-token-file: ${SUBSYSTEM_MANAGER_SERVICE_ACCOUNT_TOKEN:/var/run/secrets/kubernetes.io/serviceaccount/token}
+      ssl:
+        trust-store: file:${TRUST_STORE_FILE_LOCATION:/var/lib/ca-certificates/java-cacerts}
+        trust-store-password: ${TRUST_STORE_PASSWORD:changeit}
+      config:
+        order: -10
+      connection-timeout: 5000
+      read-timeout: 15000
+      generic:
+        enabled: false
+      kv:
+        enabled: false
+
+---
+
+adp-kms-client:
+  encryption-key:
+    name: ${ADP_KMS_ENCRYPTION_KEY_NAME:eric-esoa-subsystem-management-encryption-key}
+  retry-policy:
+    max-attempts: 3
+    backoff-delay: 5000
+
+---
+
+paths:
+  subsystem-management:
+    base-path: /subsystem-manager/v1
+
+  subsystem-types:
+    base-path: ${paths.subsystem-management.base-path}/subsystem-types
+
+  eso-security:
+    host: ${ESO_SECURITY_HOST:localhost:8005}
+
+  v2:
+    subsystem-management:
+      base-path: /subsystem-manager/v2
+
+    subsystem-types:
+      base-path: ${paths.v2.subsystem-management.base-path}/subsystem-types
+
+---
+
+featuretoggle:
+  features:
+    sol005: ${SOL005_ENABLED:true}
+
+security:
+  cryptoStoreParams:
+    keyPass: "Y2hhbmdlaXQ="
+    storePass: "Y2hhbmdlaXQ="
+    keyAlias: subsystem-management
+    keyStoreType: JKS
+  tls:
+    enabled: ${SECURITY_TLS_ENABLED:false}
+  scheme: ${SECURITY_SCHEME:http}
+  keystore:
+    path: ${java.io.tmpdir}/keystore.jks
+    tlsCertDirectory: ${TLS_CERT_DIRECTORY:/var/run/secrets/eric-esoa-subsystem-management-int-cert/}
+    tlsCertFile: ${TLS_CERT_FILE:tls.crt}
+    tlsKeyFile: ${TLS_KEY_FILE:tls.key}
+  renewCertRetry:
+    delay: ${CERT_RENEW_RETRY_DELAY:10000}
+    times: ${CERT_RENEW_RETRY_COUNT:6}
+
+ecmSol005Adapter:
+  url: ${security.scheme}://${ECMSOL005_ADAPTER_HOST:eric-eo-ecmsol005-adapter}
+
+domainOrchAdapter:
+  url: ${security.scheme}://${DO_ADAPTER_HOST:eric-oss-domain-orch-adapter}
+
+connectivity:
+  check:
+    interval: 60

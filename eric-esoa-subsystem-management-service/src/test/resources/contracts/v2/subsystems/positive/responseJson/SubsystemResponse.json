@@ -1,0 +1,26 @@
+{
+  "id": 708,
+  "apiKey": "0500c886-2b71-4d7d-be89-16fe7944cc67",
+  "name": "sol005",
+  "subsystemType": {
+    "id": 2,
+    "type": "NFVO",
+    "alias": "NFVO"
+  },
+  "url": "http://eric-eo-ecmsol005-stub",
+  "connectionProperties": [
+    {
+      "id": 709,
+      "name": "connection1",
+      "tenant": "ECM",
+      "username": "ecmadmin",
+      "password": "16oXzsvcbdqEkIHHG7uF3g==",
+      "encryptedKeys": [
+        "password"
+      ],
+      "subsystemUsers": []
+    }
+  ],
+  "vendor": "Ericsson",
+  "adapterLink": "eric-eo-ecmsol005-adapter"
+}

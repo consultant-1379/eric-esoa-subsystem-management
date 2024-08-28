@@ -1,0 +1,35 @@
+{
+    "id":"%id",
+    "subsystemTypeId":5,
+    "name":"newname",
+    "url":"/newurl",
+    "connectionProperties":[
+        {
+            "id":3,
+            "subsystemId":5,
+            "name":"connection1",
+            "tenant":"master",
+            "username":"ecmadmin",
+            "password":"CloudAdmin123",
+            "encryptedKeys":[
+                "password"
+            ],
+            "subsystemUsers":[
+                {
+                    "id":5,
+                    "connectionPropsId":3
+                },
+                {
+                    "id":16,
+                    "connectionPropsId":3
+                }
+            ]
+        }
+    ],
+    "vendor":"new-vendor",
+    "subsystemType":{
+        "id":5,
+        "type":"PhysicalDevice"
+    },
+    "adapterLink":"eric-eo-ecm-adapter"
+}

@@ -1,0 +1,1182 @@
+{
+    "$schema": "http://json-schema.org/draft-02/schema#",
+    "$ref": "#/definitions/Welcome2",
+    "definitions": {
+        "Welcome2": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+                "global": {
+                    "$ref": "#/definitions/Global"
+                },
+                "affinity": {
+                    "$ref": "#/definitions/Affinity"
+                },
+                "imageCredentials": {
+                    "$ref": "#/definitions/ImageCredentials"
+                },
+                "images": {
+                    "$ref": "#/definitions/Images"
+                },
+                "updateStrategy": {
+                    "$ref": "#/definitions/UpdateStrategy"
+                },
+                "debug": {
+                    "type": "boolean"
+                },
+                "replicaCount": {
+                    "type": "integer"
+                },
+                "port": {
+                    "$ref": "#/definitions/Welcome2Port"
+                },
+                "service": {
+                    "$ref": "#/definitions/Service"
+                },
+                "resources": {
+                    "$ref": "#/definitions/Resources"
+                },
+                "probes": {
+                    "$ref": "#/definitions/Probes"
+                },
+                "terminationGracePeriodSeconds": {
+                    "type": "integer"
+                },
+                "tolerations": {
+                    "type": "array",
+                    "items": {}
+                },
+                "nodeSelector": {
+                    "$ref": "#/definitions/Annotations"
+                },
+                "topologySpreadConstraints": {
+                    "type": "array",
+                    "items": {}
+                },
+                "logging": {
+                    "$ref": "#/definitions/Logging"
+                },
+                "database": {
+                    "$ref": "#/definitions/Welcome2DB"
+                },
+                "subsystemManagement": {
+                    "$ref": "#/definitions/SubsystemManagement"
+                },
+                "old": {
+                    "$ref": "#/definitions/Old"
+                },
+                "prometheus": {
+                    "$ref": "#/definitions/Prometheus"
+                },
+                "notificationServiceEventProducer": {
+                    "$ref": "#/definitions/NotificationServiceEventProducer"
+                },
+                "client": {
+                    "$ref": "#/definitions/Client"
+                },
+                "checkConnectivity": {
+                    "$ref": "#/definitions/CheckConnectivity"
+                },
+                "labels": {
+                    "$ref": "#/definitions/Annotations"
+                },
+                "annotations": {
+                    "$ref": "#/definitions/Annotations"
+                },
+                "bandwidth": {
+                    "$ref": "#/definitions/Bandwidth"
+                },
+                "podPriority": {
+                    "$ref": "#/definitions/PodPriority"
+                },
+                "autoScaling": {
+                    "$ref": "#/definitions/AutoScaling"
+                },
+                "podDisruptionBudget": {
+                    "$ref": "#/definitions/PodDisruptionBudget"
+                },
+                "nameOverride": {
+                    "type": [ "null", "string" ]
+                },
+                "log": {
+                    "$ref": "#/definitions/Log"
+                },
+                "kms": {
+                    "$ref": "#/definitions/AdpKms"
+                },
+                "vault": {
+                    "$ref": "#/definitions/SpringCloudVault"
+                }
+            },
+            "required": [
+                "affinity",
+                "autoScaling",
+                "bandwidth",
+                "checkConnectivity",
+                "client",
+                "database",
+                "debug",
+                "global",
+                "imageCredentials",
+                "images",
+                "log",
+                "logging",
+                "nodeSelector",
+                "notificationServiceEventProducer",
+                "old",
+                "podDisruptionBudget",
+                "podPriority",
+                "port",
+                "probes",
+                "prometheus",
+                "replicaCount",
+                "resources",
+                "service",
+                "subsystemManagement",
+                "terminationGracePeriodSeconds",
+                "tolerations",
+                "topologySpreadConstraints",
+                "updateStrategy"
+            ],
+            "title": "Welcome2"
+        },
+        "AdpKms": {
+            "additionalProperties": false,
+            "type": "object",
+            "properties": {
+                "adminAccountName":  {
+                    "type": "string"
+                },
+                "certificate":  {
+                    "$ref": "#/definitions/KmsCertificate"
+                },
+                "encryptionKey":  {
+                    "type": "string"
+                },
+                "scriptFileName":  {
+                    "type": "string"
+                },
+                "sipTlsTrustedRootTokenName": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "adminAccountName",
+                "certificate",
+                "encryptionKey",
+                "scriptFileName",
+                "sipTlsTrustedRootTokenName"
+            ],
+            "title": "AdpKms"
+        },
+        "Affinity": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "podAntiAffinity": {
+                    "type": "string"
+                },
+                "topologyKey": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "podAntiAffinity"
+            ],
+            "title": "Affinity"
+        },
+        "Annotations": {
+            "type": [ "null", "object"],
+            "additionalProperties": true,
+            "title": "Annotations"
+        },
+        "AutoScaling": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "minReplicas": {
+                    "type": "integer"
+                },
+                "maxReplicas": {
+                    "type": "integer"
+                },
+                "targetCPUUtilizationPercentage": {
+                    "type": "null"
+                }
+            },
+            "required": [
+                "enabled",
+                "maxReplicas",
+                "minReplicas"
+            ],
+            "title": "AutoScaling"
+        },
+        "Bandwidth": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "eric-esoa-subsystem-management": {
+                    "$ref": "#/definitions/Curl"
+                },
+                "keycloakClient": {
+                    "$ref": "#/definitions/Curl"
+                },
+                "curl": {
+                    "$ref": "#/definitions/Curl"
+                }
+            },
+            "required": [
+                "curl",
+                "eric-esoa-subsystem-management",
+                "keycloakClient"
+            ],
+            "title": "Bandwidth"
+        },
+        "Curl": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "maxEgressRate": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "maxEgressRate"
+            ],
+            "title": "Curl"
+        },
+        "CheckConnectivity": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "cleanUpTimerPeriod": {
+                    "type": "integer"
+                },
+                "reportAgeingTime": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "cleanUpTimerPeriod",
+                "reportAgeingTime"
+            ],
+            "title": "CheckConnectivity"
+        },
+        "Client": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "connectionTimeout": {
+                    "type": "integer"
+                },
+                "readTimeout": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "connectionTimeout",
+                "readTimeout"
+            ],
+            "title": "Client"
+        },
+        "Welcome2DB": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+                "host": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "integer"
+                },
+                "dbName": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "port",
+                "host",
+                "dbName"
+            ],
+            "title": "Welcome2DB"
+        },
+        "Baseline": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "enabled"
+            ],
+            "title": "Baseline"
+        },
+        "Global": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+                "registry": {
+                    "$ref": "#/definitions/GlobalRegistry"
+                },
+                "hosts": {
+                    "$ref": "#/definitions/Hosts"
+                },
+                "log": {
+                    "$ref": "#/definitions/Log"
+                },
+                "iam": {
+                    "$ref": "#/definitions/Iam"
+                },
+                "db": {
+                    "$ref": "#/definitions/GlobalDB"
+                },
+                "featureToggle": {
+                    "$ref": "#/definitions/FeatureToggle"
+                },
+                "nodeSelector": {
+                    "$ref": "#/definitions/Annotations"
+                },
+                "internalIPFamily": {
+                    "type": ["string", "null"]
+                },
+                "labels": {
+                    "$ref": "#/definitions/Annotations"
+                },
+                "annotations": {
+                    "$ref": "#/definitions/Annotations"
+                },
+                "timezone": {
+                    "type": [ "null", "string" ]
+                },
+                "pullSecret": {
+                    "type": [ "null", "string" ]
+                },
+                "security": {
+                    "$ref": "#/definitions/Security"
+                }
+            },
+            "required": [
+                "db",
+                "featureToggle",
+                "hosts",
+                "iam",
+                "nodeSelector"
+            ],
+            "title": "Global"
+        },
+        "GlobalDB": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "connection": {
+                    "$ref": "#/definitions/Connection"
+                }
+            },
+            "required": [
+                "connection"
+            ],
+            "title": "GlobalDB"
+        },
+        "Connection": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "max-lifetime": {
+                    "type": "null"
+                }
+            },
+            "required": [
+            ],
+            "title": "Connection"
+        },
+        "FeatureToggle": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "so": {
+                    "$ref": "#/definitions/So"
+                }
+            },
+            "required": [
+                "so"
+            ],
+            "title": "FeatureToggle"
+        },
+        "So": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "sol005Enabled": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "sol005Enabled"
+            ],
+            "title": "So"
+        },
+        "Hosts": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+                "iam": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "iam"
+            ],
+            "title": "Hosts"
+        },
+        "Iam": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+                "adminSecret": {
+                    "type": "string"
+                },
+                "userKey": {
+                    "type": "string"
+                },
+                "passwordKey": {
+                    "type": "string"
+                },
+                "cacert": {
+                    "$ref": "#/definitions/Cacert"
+                }
+            },
+            "required": [
+                "adminSecret",
+                "cacert",
+                "passwordKey",
+                "userKey"
+            ],
+            "title": "Iam"
+        },
+        "Cacert": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+                "secretName": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "filePath": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "filePath",
+                "key",
+                "secretName"
+            ],
+            "title": "Cacert"
+        },
+        "KmsCertificate": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "cacertFilePath": {
+                    "type": "string"
+                },
+                "cacertKey": {
+                    "type": "string"
+                },
+                "cacertVolumeName": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "cacertFilePath",
+                "cacertKey",
+                "cacertVolumeName"
+            ],
+            "title": "KmsCertificate"
+        },
+        "Log": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+                "streamingMethod": {
+                    "anyOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
+                }
+            },
+            "required": [
+            ],
+            "title": "Log"
+        },
+        "GlobalRegistry": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+                "url": {
+                    "type": [ "null", "string" ]
+                },
+                "imagePullPolicy": {
+                    "type": [ "null", "string" ]
+                },
+                "repoPath": {
+                    "type": [ "null", "string", "object" ]
+                }
+            },
+            "required": [
+            ],
+            "title": "GlobalRegistry"
+        },
+        "Security": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+                "tls": {
+                    "$ref": "#/definitions/Baseline"
+                },
+                "policyBinding": {
+                    "$ref": "#/definitions/PolicyBinding"
+                },
+                "policyReferenceMap": {
+                    "$ref": "#/definitions/PolicyReferenceMap"
+                },
+                "privilegedPolicyClusterRoleName": {
+                    "type": [ "null", "string" ]
+                }
+            },
+            "required": [
+            ],
+            "title": "Security"
+        },
+        "SpringCloudVault": {
+            "additionalProperties": false,
+            "properties": {
+                "config": {
+                    "$ref": "#/definitions/SpringCloudVaultConfig"
+                }
+            },
+            "required": [
+                "config"
+            ],
+            "title": "SpringCloudVault",
+            "type": "object"
+        },
+        "SpringCloudVaultConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "host": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "string"
+                },
+                "kubernetesUserRole": {
+                    "type": "string"
+                },
+                "kubernetesServiceAccountToken": {
+                    "type": "string"
+                },
+                "kubernetesServiceAccountNamespace": {
+                    "type": "string"
+                },
+                "sslTrustStoreFilePath": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "host",
+                "port",
+                "kubernetesUserRole",
+                "kubernetesServiceAccountToken",
+                "kubernetesServiceAccountNamespace",
+                "sslTrustStoreFilePath"
+            ],
+            "title": "SpringCloudVault",
+            "type": "object"
+        },
+        "PolicyBinding": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "create": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "create"
+            ],
+            "title": "PolicyBinding"
+        },
+        "PolicyReferenceMap": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "default-restricted-security-policy": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "default-restricted-security-policy"
+            ],
+            "title": "PolicyReferenceMap"
+        },
+        "ImageCredentials": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+                "repoPath": {
+                    "type": [ "null", "string", "object" ]
+                },
+                "pullSecret": {
+                    "type": [ "null", "string" ]
+                },
+                "registry": {
+                    "type": [ "null", "object" ]
+                },
+                "mainImage": {
+                    "$ref": "#/definitions/MainImage"
+                }
+            },
+            "required": [
+                "mainImage"
+            ],
+            "title": "ImageCredentials"
+        },
+        "MainImage": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "repoPath": {
+                    "type": [ "null", "string", "object" ]
+                },
+                "registry": {
+                    "$ref": "#/definitions/MainImageRegistry"
+                }
+            },
+            "required": [
+                "registry"
+            ],
+            "title": "MainImage"
+        },
+        "MainImageRegistry": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "url": {
+                    "type": [ "null", "string" ]
+                }
+            },
+            "required": [
+            ],
+            "title": "MainImageRegistry"
+        },
+        "Images": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "subsystemMgt": {
+                    "$ref": "#/definitions/SubsystemMgt"
+                },
+                "keycloakClient": {
+                    "$ref": "#/definitions/KeycloakClient"
+                }
+            },
+            "required": [
+                "keycloakClient",
+                "subsystemMgt"
+            ],
+            "title": "Images"
+        },
+        "KeycloakClient": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "tag": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "tag"
+            ],
+            "title": "KeycloakClient"
+        },
+        "SubsystemMgt": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "repository": {
+                    "type": "string"
+                },
+                "tag": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "repository",
+                "tag"
+            ],
+            "title": "SubsystemMgt"
+        },
+        "Logging": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "format": {
+                    "$ref": "#/definitions/Format"
+                }
+            },
+            "required": [
+                "format"
+            ],
+            "title": "Logging"
+        },
+        "Format": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "json": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "json"
+            ],
+            "title": "Format"
+        },
+        "NotificationServiceEventProducer": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "topic": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "enabled",
+                "topic"
+            ],
+            "title": "NotificationServiceEventProducer"
+        },
+        "Old": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "subsystem": {
+                    "$ref": "#/definitions/Subsystem"
+                }
+            },
+            "required": [
+                "subsystem"
+            ],
+            "title": "Old"
+        },
+        "Subsystem": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "title": "Subsystem"
+        },
+        "PodDisruptionBudget": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "minAvailable": {
+                    "type": "string"
+                },
+                "maxUnavailable": {
+                    "type": "null"
+                }
+            },
+            "required": [
+                "minAvailable"
+            ],
+            "title": "PodDisruptionBudget"
+        },
+        "PodPriority": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "eric-esoa-subsystem-management": {
+                    "$ref": "#/definitions/PodPriorityEricEoSubsystemManagement"
+                }
+            },
+            "required": [
+                "eric-esoa-subsystem-management"
+            ],
+            "title": "PodPriority"
+        },
+        "PodPriorityEricEoSubsystemManagement": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "priorityClassName": {
+                    "type": [ "null", "string" ]
+                }
+            },
+            "required": [
+            ],
+            "title": "PodPriorityEricEoSubsystemManagement"
+        },
+        "Welcome2Port": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "http": {
+                    "type": "integer"
+                },
+                "https": {
+                    "type": "integer"
+                },
+                "jvmDebug": {
+                    "type": "integer"
+                },
+                "jvmJmxRemote": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "http",
+                "https",
+                "jvmDebug",
+                "jvmJmxRemote"
+            ],
+            "title": "Welcome2Port"
+        },
+        "Probes": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "eric-esoa-subsystem-management": {
+                    "$ref": "#/definitions/ProbesEricEoSubsystemManagement"
+                }
+            },
+            "required": [
+                "eric-esoa-subsystem-management"
+            ],
+            "title": "Probes"
+        },
+        "ProbesEricEoSubsystemManagement": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "readinessProbe": {
+                    "$ref": "#/definitions/NessProbe"
+                },
+                "livenessProbe": {
+                    "$ref": "#/definitions/NessProbe"
+                }
+            },
+            "required": [
+                "livenessProbe",
+                "readinessProbe"
+            ],
+            "title": "ProbesEricEoSubsystemManagement"
+        },
+        "NessProbe": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "httpGet": {
+                    "$ref": "#/definitions/HTTPGet"
+                },
+                "initialDelaySeconds": {
+                    "type": "integer"
+                },
+                "periodSeconds": {
+                    "type": "integer"
+                },
+                "failureThreshold": {
+                    "type": "integer"
+                },
+                "timeoutSeconds": {
+                    "type": "integer"
+                },
+                "successThreshold": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "failureThreshold",
+                "httpGet",
+                "initialDelaySeconds",
+                "periodSeconds",
+                "timeoutSeconds"
+            ],
+            "title": "NessProbe"
+        },
+        "HTTPGet": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "path": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "path",
+                "port"
+            ],
+            "title": "HTTPGet"
+        },
+        "Prometheus": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "path": {
+                    "type": "string"
+                },
+                "scrape": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "path",
+                "scrape"
+            ],
+            "title": "Prometheus"
+        },
+        "Resources": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+                "eric-esoa-subsystem-management": {
+                    "$ref": "#/definitions/ResourcesEricEoSubsystemManagement"
+                },
+                "pgInitContainer": {
+                    "$ref": "#/definitions/KeycloakClientClass"
+                },
+                "keycloak-client": {
+                    "$ref": "#/definitions/KeycloakClientClass"
+                }
+            },
+            "required": [
+                "eric-esoa-subsystem-management",
+                "keycloak-client",
+                "pgInitContainer"
+            ],
+            "title": "Resources"
+        },
+        "ResourcesEricEoSubsystemManagement": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "requests": {
+                    "$ref": "#/definitions/Limits"
+                },
+                "limits": {
+                    "$ref": "#/definitions/Limits"
+                },
+                "jvm": {
+                    "$ref": "#/definitions/JVM"
+                }
+            },
+            "required": [
+                "jvm",
+                "limits",
+                "requests"
+            ],
+            "title": "ResourcesEricEoSubsystemManagement"
+        },
+        "JVM": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "initialMemoryAllocationPercentage": {
+                    "type": "integer"
+                },
+                "smallMemoryAllocationMaxPercentage": {
+                    "type": "integer"
+                },
+                "largeMemoryAllocationMaxPercentage": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "initialMemoryAllocationPercentage",
+                "largeMemoryAllocationMaxPercentage",
+                "smallMemoryAllocationMaxPercentage"
+            ],
+            "title": "JVM"
+        },
+        "Limits": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "memory": {
+                    "type": "string"
+                },
+                "cpu": {
+                    "type": "string"
+                },
+                "ephemeral-storage": {
+                    "type": [ "null", "string" ]
+                }
+            },
+            "required": [
+                "cpu",
+                "memory"
+            ],
+            "title": "Limits"
+        },
+        "KeycloakClientClass": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "requests": {
+                    "$ref": "#/definitions/Limits"
+                },
+                "limits": {
+                    "$ref": "#/definitions/Limits"
+                }
+            },
+            "required": [
+                "limits",
+                "requests"
+            ],
+            "title": "KeycloakClientClass"
+        },
+        "Service": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "port": {
+                    "$ref": "#/definitions/ServicePort"
+                }
+            },
+            "required": [
+                "port"
+            ],
+            "title": "Service"
+        },
+        "ServicePort": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "http": {
+                    "type": "integer"
+                },
+                "https": {
+                    "type": "integer"
+                },
+                "httpsSm": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "http",
+                "https",
+                "httpsSm"
+            ],
+            "title": "ServicePort"
+        },
+        "SubsystemManagement": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "esoSecurity": {
+                    "$ref": "#/definitions/EsoSecurity"
+                },
+                "nfvo": {
+                    "$ref": "#/definitions/Nfvo"
+                }
+            },
+            "required": [
+                "esoSecurity",
+                "nfvo"
+            ],
+            "title": "SubsystemManagement"
+        },
+        "EsoSecurity": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "host": {
+                    "type": "string",
+                    "format": "host"
+                }
+            },
+            "required": [
+                "host"
+            ],
+            "title": "EsoSecurity"
+        },
+        "Nfvo": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "label": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "label"
+            ],
+            "title": "Nfvo"
+        },
+        "UpdateStrategy": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "type": {
+                    "type": "string"
+                },
+                "rollingUpdate": {
+                    "$ref": "#/definitions/RollingUpdate"
+                }
+            },
+            "required": [
+                "rollingUpdate",
+                "type"
+            ],
+            "title": "UpdateStrategy"
+        },
+        "RollingUpdate": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "maxUnavailable": {
+                    "type": "string"
+                },
+                "maxSurge": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "maxSurge",
+                "maxUnavailable"
+            ],
+            "title": "RollingUpdate"
+        }
+    }
+}

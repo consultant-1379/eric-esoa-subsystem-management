@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ ~ COPYRIGHT Ericsson 2023-2024
+ ~
+ ~
+ ~
+ ~ The copyright to the computer program(s) herein is the property of
+ ~
+ ~ Ericsson Inc. The programs may be used and/or copied only with written
+ ~
+ ~ permission from Ericsson Inc. or in accordance with the terms and
+ ~
+ ~ conditions stipulated in the agreement/contract under which the
+ ~
+ ~ program(s) have been supplied.
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.ericsson.oss.orchestration.so</groupId>
+        <artifactId>so-master</artifactId>
+        <version>3.0.70</version>
+    </parent>
+
+    <groupId>com.ericsson.bos.so</groupId>
+    <artifactId>eric-esoa-subsystem-management</artifactId>
+    <version>3.6.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+
+    <modules>
+        <module>eric-esoa-subsystem-management-service</module>
+        <module>eric-esoa-subsystem-management-service-api</module>
+    </modules>
+
+
+    <properties>
+
+        <docker.image.name>eric-esoa-subsystem-management-service</docker.image.name>
+
+        <!-- Sonar configuration -->
+        <sonar.cpd.exclusions>**/com/ericsson/bos/so/subsystemsmanager/api/models/entities/*.java, **/WebClientConfig.java
+        </sonar.cpd.exclusions>
+        <!-- Ignore generated code -->
+        <sonar.coverage.exclusions>**/com/ericsson/bos/so/subsystemsmanager/api/**/*, **/WebClientConfig.java</sonar.coverage.exclusions>
+        <sonar.exclusions>**/WebClientConfig.java</sonar.exclusions>
+
+        <!-- Compiler plugin properties -->
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+
+        <!-- Overriding the spring vault core version -->
+        <spring.vault.core.version>3.1.1</spring.vault.core.version>
+
+        <!-- Overriding the micrometer core version -->
+        <micrometer.core.version>1.12.5</micrometer.core.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--Subsystem API -->
+            <dependency>
+                <groupId>com.ericsson.boss.so</groupId>
+                <artifactId>eric-esoa-subsystem-management-service-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- Contract Testing -->
+
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-inline</artifactId>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

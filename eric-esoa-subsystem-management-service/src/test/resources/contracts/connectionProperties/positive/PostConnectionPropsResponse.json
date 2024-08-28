@@ -1,0 +1,21 @@
+{
+    "id":3,
+    "subsystemId":"%id",
+    "name":"connection2",
+    "tenant":"master",
+    "username":"ecmadmin",
+    "password":"CloudAdmin123",
+    "encryptedKeys":[
+        "password"
+    ],
+    "subsystemUsers":[
+        {
+            "id":5,
+            "connectionPropsId":3
+        },
+        {
+            "id":16,
+            "connectionPropsId":3
+        }
+    ]
+}

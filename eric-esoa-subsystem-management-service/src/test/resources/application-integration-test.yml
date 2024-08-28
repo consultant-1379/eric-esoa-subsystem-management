@@ -1,0 +1,131 @@
+#
+# COPYRIGHT Ericsson 2023-2024
+#
+#
+#
+# The copyright to the computer program(s) herein is the property of
+#
+# Ericsson Inc. The programs may be used and/or copied only with written
+#
+# permission from Ericsson Inc. or in accordance with the terms and
+#
+# conditions stipulated in the agreement/contract under which the
+#
+# program(s) have been supplied.
+#
+
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    url: ${DB_URL}
+    user: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    baselineOnMigrate: ${BASELINE_ON_MIGRATE:false}
+    out-of-order: true
+    validateOnMigrate: false
+
+  jpa:
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+        id:
+          new_generator_mappings: false
+          db_structure_naming_strategy: legacy
+    open-in-view: false
+    hibernate.use-new-id-generator-mappings: true
+    hibernate:
+      ddl-auto: none
+
+  database-platform: org.hibernate.dialect.H2Dialect
+  defer-datasource-initialization: true
+
+  properties.hibernate:
+    show-sql: true
+    format_sql: true
+    use_sql_comments: false
+
+  cloud:
+    vault:
+      enabled: false
+      host: ${VAULT_HOST:localhost}
+      port: ${VAULT_PORT:8201}
+      scheme: http
+      authentication: KUBERNETES
+      kubernetes:
+        role: ${VAULT_USER_ROLE:kms-crypto-role_eric-esoa-subsystem-management}
+        kubernetes-path: kubernetes
+        service-account-token-file: ${SERVICE_ACCOUNT_TOKEN:src/test/resources/kms/service-account-token/service-account.yml}
+      ssl:
+        trust-store: null
+        trust-store-password: null
+      config:
+        order: -10
+      connection-timeout: 5000
+      read-timeout: 15000
+      generic:
+        enabled: false
+      kv:
+        enabled: false
+
+---
+
+adp-kms-client:
+  encryption-key:
+    name: ${ADP_KMS_ENCRYPTION_KEY_NAME:eric-esoa-subsystem-management-encryption-key}
+  retry-policy:
+    max-attempts: 3
+    backoff-delay: 1000
+
+---
+
+paths:
+  subsystem-management:
+    base-path: /subsystem-manager/v1
+
+  eso-security:
+    host: http://localhost:9092
+
+  v2:
+    subsystem-management:
+      base-path: /subsystem-manager/v2
+
+    subsystem-types:
+      base-path: ${paths.v2.subsystem-management.base-path}/subsystem-types
+
+---
+
+logging:
+  level:
+    com.ericsson.oss.so.service.subsystemsmanager: TRACE   # Parent package of this project
+    org.hibernate.type.descriptor.sql.BasicBinder: DEBUG   # Change to TRACE for detailed SQL statements
+
+---
+
+featuretoggle:
+  features:
+    sol005: ${SOL005_ENABLED:true}
+
+---
+
+security:
+  cryptoStoreParams:
+    keyPass: "Y2hhbmdlaXQ="
+    storePass: "Y2hhbmdlaXQ="
+    keyAlias: subsystem-management
+    keyStoreType: JKS
+  tls:
+    enabled: ${SECURITY_TLS_ENABLED:false}
+  scheme: ${SECURITY_SCHEME:http}
+  keystore:
+    path: src/test/resources/tmp/keystore.jks
+    tlsCertDirectory: ${TLS_CERT_DIRECTORY:src/test/resources/secrets/eric-esoa-subsystem-management-int-cert/}
+    tlsCertFile: ${TLS_CERT_FILE:tls.crt}
+    tlsKeyFile: ${TLS_KEY_FILE:tls.key}
+  renewCertRetry:
+    delay: ${CERT_RENEW_RETRY_DELAY:10000}
+    times: ${CERT_RENEW_RETRY_COUNT:6}

@@ -1,0 +1,29 @@
+[
+    {
+        "id": 72,
+        "apiKey": "d9bdabb0-ae28-445f-a266-8b913787531d",
+        "name": "ecm",
+        "subsystemType": {
+            "id": 9,
+            "type": "NFVO",
+            "alias": "NFVO"
+        },
+        "url": "http://eric-eo-ecmsol005-stub",
+        "connectionProperties": [
+            {
+                "id": 73,
+                "subsystemId": 72,
+                "name": "connection1",
+                "tenant": "ecm",
+                "username": "ecmadmin",
+                "password": "CloudAdmin123",
+                "encryptedKeys": [
+                    "password"
+                ],
+                "subsystemUsers": []
+            }
+        ],
+        "vendor": "Ericsson",
+        "adapterLink": "eric-eo-ecmsol005-adapter"
+    }
+]

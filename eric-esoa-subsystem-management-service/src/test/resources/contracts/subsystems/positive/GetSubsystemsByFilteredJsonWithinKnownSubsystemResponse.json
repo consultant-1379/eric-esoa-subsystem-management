@@ -1,0 +1,8 @@
+{
+    "id":"%id",
+    "name":"subsystem-10",
+    "subsystemType":{
+        "id":5,
+        "type":"PhysicalDevice"
+    }
+}

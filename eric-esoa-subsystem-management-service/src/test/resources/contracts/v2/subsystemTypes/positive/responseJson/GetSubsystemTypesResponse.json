@@ -1,0 +1,38 @@
+[
+    {
+        "id": 1,
+        "type": "DomainManager",
+        "alias": "Domain manager",
+        "subtypes": []
+    },
+    {
+        "id": 2,
+        "type": "NFVO",
+        "alias": "NFVO",
+        "subtypes": []
+    },
+    {
+        "id": 5,
+        "type": "PhysicalDevice",
+        "alias": "Physical device",
+        "subtypes": []
+    },
+    {
+        "id": 6,
+        "type": "CmGateway",
+        "alias": "Cm gateway",
+        "subtypes": []
+    },
+    {
+        "id": 7,
+        "type": "InventorySystem",
+        "alias": "Inventory system",
+        "subtypes": []
+    },
+    {
+        "id": 8,
+        "type": "DomainOrchestrator",
+        "alias": "Domain orchestrator",
+        "subtypes": []
+    }
+]

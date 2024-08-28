@@ -1,0 +1,7 @@
+"connectionProperties": [{
+    "encryptedKeys":["password"],
+    "name": "connection1",
+    "username": "ecmadmin",
+    "password": "CloudAdmin123",
+    "subsystemUsers": [{"id":5,"connectionPropsId":3},{"id":16,"connectionPropsId":3}]
+}]

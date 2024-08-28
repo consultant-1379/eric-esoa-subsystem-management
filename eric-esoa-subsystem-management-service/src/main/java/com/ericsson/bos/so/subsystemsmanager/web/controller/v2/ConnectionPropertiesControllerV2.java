@@ -1,0 +1,165 @@
+/*******************************************************************************
+ * COPYRIGHT Ericsson 2023-2024
+ *
+ *
+ *
+ * The copyright to the computer program(s) herein is the property of
+ *
+ * Ericsson Inc. The programs may be used and/or copied only with written
+ *
+ * permission from Ericsson Inc. or in accordance with the terms and
+ *
+ * conditions stipulated in the agreement/contract under which the
+ *
+ * program(s) have been supplied.
+ ******************************************************************************/
+package com.ericsson.bos.so.subsystemsmanager.web.controller.v2;
+
+import static com.ericsson.bos.so.subsystemsmanager.business.util.Constants.SUBSYSTEM_MANAGER;
+
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ericsson.bos.so.subsystemsmanager.business.api.ConnectionPropsService;
+import com.ericsson.bos.so.subsystemsmanager.business.api.v2.SubsystemsServiceV2;
+import com.ericsson.bos.so.subsystemsmanager.log.LoggerHandler;
+import com.ericsson.bos.so.subsystemsmanager.api.v2.connection_properties.SubsystemsApi;
+import com.ericsson.bos.so.subsystemsmanager.api.models.entities.ConnectionProperties;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * The Class ConnectionPropertiesControllerV2
+ * Note: Controller implements ..api.connection_properties.SubsystemApi interface.
+ */
+@Slf4j
+@RestController
+@RequestMapping(ConnectionPropertiesControllerV2.BASE_PATH)
+public class ConnectionPropertiesControllerV2 implements SubsystemsApi {
+
+    public static final String BASE_PATH = SUBSYSTEM_MANAGER + "/v2";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionPropertiesControllerV2.class);
+
+    @Autowired
+    private LoggerHandler loggerHandler;
+
+    @Autowired
+    private ConnectionPropsService connectionPropsService;
+
+    @Autowired
+    private SubsystemsServiceV2 subsystemsServiceV2;
+
+    /**
+     * Post connection properties.
+     *
+     * @param subsystemId the subsystem id
+     * @param connectionProperties the connection properties
+     * @return the response entity
+     */
+    @Override
+    public ResponseEntity<ConnectionProperties> postConnProps(@PathVariable("subsystemId") final String subsystemId,
+                                                              @RequestBody(required = true) final ConnectionProperties connectionProperties) {
+        loggerHandler.logAudit(LOGGER, String.format("postConnProps() for V2 subsystemId : %s", subsystemId));
+        final ConnectionProperties savedEntity = connectionPropsService.postConnProp(subsystemId, connectionProperties);
+        clearGhostConnectionProperties();
+        return new ResponseEntity<>(savedEntity, HttpStatus.CREATED);
+    }
+
+    /**
+     * Gets the connection properties by subsystem id.
+     *
+     * @param subsystemId the subsystem id
+     * @return the conn props by subsystem id
+     */
+    @Override
+    public ResponseEntity<List<ConnectionProperties>> getConnPropsBySubsystemId(@PathVariable("subsystemId") final String subsystemId) {
+        loggerHandler.logAudit(LOGGER, String.format("getConnPropsBySubsystemId() for V2 subsystemId: %s", subsystemId));
+        return new ResponseEntity<>(connectionPropsService.getConnPropsBySubsystemId(subsystemId), HttpStatus.OK);
+    }
+
+    /**
+     * Gets the connection properties by id.
+     *
+     * @param subsystemId the subsystem id
+     * @param connectionPropertiesId the connection properties id
+     * @return the conn props by id
+     */
+    @Override
+    public ResponseEntity<ConnectionProperties> getConnPropsById(@PathVariable("subsystemId") final String subsystemId,
+                                                                 @PathVariable("connectionPropertiesId") final String connectionPropertiesId) {
+        loggerHandler.logAudit(LOGGER, String.format("getConnPropsById() for V2 subsystemId : %s and connectionPropertiesId : %s"
+                , subsystemId, connectionPropertiesId));
+        return new ResponseEntity<>(connectionPropsService.getConnPropsById(subsystemId, connectionPropertiesId),
+                HttpStatus.OK);
+    }
+
+    /**
+     * Patch connection properties by id.
+     *
+     * @param subsystemId the subsystem id
+     * @param connectionPropertiesId the connection properties id
+     * @param updatedConnProps the updated conn props
+     * @return the response entity
+     */
+    @Override
+    public ResponseEntity<ConnectionProperties> patchConnPropsById(@PathVariable("subsystemId") final String subsystemId,
+                                                                   @PathVariable("connectionPropertiesId") final String connectionPropertiesId,
+                                                                   @RequestBody(required = true) final Map<String, Object> updatedConnProps) {
+        loggerHandler.logAudit(LOGGER, String.format("patchConnPropsById() for V2 subsystemId : %s and connectionPropertiesId : %s"
+                , subsystemId, connectionPropertiesId));
+        final ConnectionProperties savedEntity = connectionPropsService.patchConnProps(subsystemId, connectionPropertiesId, updatedConnProps);
+        clearGhostConnectionProperties();
+        return new ResponseEntity<>(savedEntity, HttpStatus.CREATED);
+    }
+
+    /**
+     * Put connection properties by id.
+     *
+     * @param subsystemId the subsystem id
+     * @param connectionPropertiesId the connection properties id
+     * @param updatedConnProps the updated conn props
+     * @return the response entity
+     */
+    @Override
+    public ResponseEntity<ConnectionProperties> putConnPropsById(@PathVariable("subsystemId") final String subsystemId,
+                                                                 @PathVariable("connectionPropertiesId") final String connectionPropertiesId,
+                                                                 @RequestBody(required = true) final ConnectionProperties updatedConnProps) {
+        loggerHandler.logAudit(LOGGER, String.format("putConnPropsById() for V2 subsystemId : %s and connectionPropertiesId : %s"
+                , subsystemId, connectionPropertiesId));
+        final ConnectionProperties savedEntity = connectionPropsService.putConnProps(subsystemId, connectionPropertiesId, updatedConnProps);
+        clearGhostConnectionProperties();
+        return new ResponseEntity<>(savedEntity, HttpStatus.CREATED);
+    }
+
+    /**
+     * Delete connection properties by id.
+     *
+     * @param subsystemId the subsystem id
+     * @param connectionPropertiesId the connection properties id
+     * @return the response entity
+     */
+    @Override
+    public ResponseEntity<Void> deleteConnPropsById(@PathVariable("subsystemId") final String subsystemId,
+            @PathVariable("connectionPropertiesId") final String connectionPropertiesId) {
+        loggerHandler.logAudit(LOGGER, String.format("deleteConnPropsById() for V2 subsystemId : %s and connectionPropertiesId : %s"
+                , subsystemId, connectionPropertiesId));
+        connectionPropsService.deleteConnProps(subsystemId, connectionPropertiesId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    private void clearGhostConnectionProperties() {
+        subsystemsServiceV2.clearGhostConnnectionProperties();
+    }
+
+}

@@ -1,0 +1,56 @@
+[
+    {
+        "id":2,
+        "subsystemId":"%id",
+        "name":"connection2",
+        "username":"ecmadmin",
+        "password":"CloudAdmin123",
+        "scriptingVMs": "scp-1-scripting,scp-2-scripting,scp-3-scripting",
+        "sftpPort": "22",
+        "encryptedKeys":[
+            "password"
+        ],
+        "subsystemUsers":[
+            {
+                "id":4,
+                "connectionPropsId":2
+            },
+            {
+                "id":13,
+                "connectionPropsId":3
+            },
+            {
+                "id":15,
+                "connectionPropsId":3
+            },
+            {
+                "id":16,
+                "connectionPropsId":3
+            }
+        ]
+    },
+    {
+        "id":3,
+        "subsystemId":"%id",
+        "name":"connection1",
+        "username":"ecmadmin",
+        "password":"CloudAdmin123",
+        "encryptedKeys":[
+            "password"
+        ],
+        "subsystemUsers":[
+            {
+                "id":13,
+                "connectionPropsId":3
+            },
+            {
+                "id":15,
+                "connectionPropsId":3
+            },
+            {
+                "id":16,
+                "connectionPropsId":3
+            }
+        ]
+    }
+]

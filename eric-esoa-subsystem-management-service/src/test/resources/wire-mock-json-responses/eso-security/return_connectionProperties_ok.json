@@ -1,0 +1,19 @@
+	{
+		"request": {
+			"method": "GET",
+			"url": "/credentialsmanager/v1.0/srm?module=test-password"
+		},
+		"response": {
+			"status": 200,
+			"jsonBody": {
+    			"errorMessage": "N/A",
+    			"httpStatusCode": "200",
+    			"dateTimeOfExecution": "2018-08-21T10:02:04.740",
+    			"callerContext": "Remote Addr: 172.18.0.3",
+    			"connectionProperties": "test-password"
+			},
+			"headers": {
+				"content-Type": "application/json"
+			}
+		}
+	}

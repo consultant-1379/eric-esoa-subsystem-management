@@ -1,0 +1,288 @@
+#
+# COPYRIGHT Ericsson 2023-2024
+#
+#
+#
+# The copyright to the computer program(s) herein is the property of
+#
+# Ericsson Inc. The programs may be used and/or copied only with written
+#
+# permission from Ericsson Inc. or in accordance with the terms and
+#
+# conditions stipulated in the agreement/contract under which the
+#
+# program(s) have been supplied.
+#
+
+global:
+  createDB: false
+  registry:
+    url: armdocker.rnd.ericsson.se
+    repoPath:
+  hosts:
+    iam: "iam.ericsson.com"
+  log:
+    streamingMethod:
+  iam:
+    adminSecret: eric-sec-access-mgmt-creds
+    userKey: kcadminid
+    passwordKey: kcpasswd
+    cacert:
+      secretName: eric-bss-bam-oam-external-server-cert
+      key: ca.crt
+      filePath: iam/ca.crt
+  db:
+    connection:
+      max-lifetime:
+  featureToggle:
+    so:
+      sol005Enabled: true
+  nodeSelector: {}
+  labels: {}
+  annotations: {}
+
+rbac:
+  enabled: true
+
+affinity:
+  podAntiAffinity: "soft"
+  topologyKey: "kubernetes.io/hostname"
+
+imageCredentials:
+  # repoPath include the image path relative to the registry url, excluding image name
+  repoPath:
+  mainImage:
+    repoPath: # see default in eric-product-info.yaml
+    registry:
+      url:
+
+images:
+  subsystemMgt:
+    name: eric-esoa-subsystem-management
+    repository: IMAGE_REPO
+    tag: IMAGE_TAG
+  keycloakClient:
+    name: keycloak-client
+    tag: 1.0.0-54
+
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 100%
+    maxSurge: 100%
+
+debug: false
+replicaCount: 1
+port:
+  http: 8080
+  https: 8443
+  jvmDebug: 9001
+  jvmJmxRemote: 9002
+service:
+  port:
+    http: 80
+    https: 443
+    httpsSm: 8443
+resources:
+  eric-esoa-subsystem-management:
+    requests:
+      memory: "450M"
+      cpu: 100m
+      ephemeral-storage:
+    limits:
+      memory: "500M"
+      cpu: 1000m
+      ephemeral-storage:
+    jvm:
+      initialMemoryAllocationPercentage: 50
+      smallMemoryAllocationMaxPercentage: 90
+      largeMemoryAllocationMaxPercentage: 90
+  pgInitContainer:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+      ephemeral-storage:
+    limits:
+      memory: "128Mi"
+      cpu: "100m"
+      ephemeral-storage:
+  keycloak-client:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "128Mi"
+      cpu: "100m"
+
+probes:
+  eric-esoa-subsystem-management:
+    # Total readiness probe time: 60 seconds
+    #   Initial delay: 10 seconds
+    #   Retry attempts: 10 times x 5 seconds wait = 50 seconds
+    readinessProbe:
+      httpGet:
+        path: /actuator/health/readiness
+        port: 8080
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      failureThreshold: 10
+      timeoutSeconds: 2
+      successThreshold: 1
+    # Initial delay liveness probe: 120 seconds (+60 seconds after readiness probe max time)
+    # Retry attempts: 4 times x 5 seconds waits = 20 seconds
+    livenessProbe:
+      httpGet:
+        path: /actuator/health/liveness
+        port: 8080
+      initialDelaySeconds: 120
+      periodSeconds: 5
+      failureThreshold: 4
+      timeoutSeconds: 2
+
+# Configuration to control upper limit of graceful termination execution time
+terminationGracePeriodSeconds: 60
+
+# Configuration of average time for individual MS async call response (in milliseconds)
+awaitTerminationPeriodSeconds: 60000
+
+tolerations: []
+
+nodeSelector: {}
+
+topologySpreadConstraints: []
+
+logging:
+  format:
+    json: true
+
+database:
+  host: edb
+  port: 5444
+  dbName: eric_esoa_common
+  schemaName: subsystem
+  secret: edb-users-secret
+  dbaUserkey: super-user
+  dbaPasswdkey: super-pwd
+  userkey: custom-user
+  passwdkey: custom-pwd
+  sslMode: disable
+  flyway:
+    baseline:
+      enabled: true
+
+subsystemManagement:
+  esoSecurity:
+    host: http://eric-eo-credential-manager
+  nfvo:
+    label: nfvo
+
+old:
+  subsystem:
+    name: eric-esoa-subsystems-manager
+
+prometheus:
+  path: /actuator/prometheus
+  scrape: true
+
+ecmSol005Adapter:
+  host: eric-eo-ecmsol005-adapter
+
+domainOrchAdapter:
+  host: eric-oss-domain-orch-adapter
+
+notificationServiceEventProducer:
+  enabled: false
+  topic: "event"
+
+client:
+  connectionTimeout: 130
+  readTimeout: 130
+
+checkConnectivity:
+  cleanUpTimerPeriod: 600
+  reportAgeingTime: 900
+
+labels: {}
+annotations: {}
+
+bandwidth:
+  eric-esoa-subsystem-management:
+    maxEgressRate: 100M
+  keycloakClient:
+    maxEgressRate: 100M
+  curl:
+    maxEgressRate: 100M
+
+podPriority:
+  eric-esoa-subsystem-management:
+    priorityClassName:
+
+# DR-D1122-130 and DR-D1122-131
+autoScaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage:
+
+# DR-1120-055 replaced by DR-1120-056
+podDisruptionBudget:
+  minAvailable: "0%"
+  maxUnavailable:
+
+# local streamingMethod:
+# indirect - stdout to infrastructure logging framework
+# direct - direct streaming to the Log Aggregator (e.g. eric-log-transformer)
+# dual - stdout to infrastructure logging framework and direct streaming to Log Aggregator
+log:
+  streamingMethod: "indirect"
+
+kms:
+  adminAccountName: eric-sec-key-management-admin
+  certificate:
+    cacertFilePath: "siptls-ca.crt"
+    cacertKey: "ca.crt"
+    cacertVolumeName: "kms-ca-cert"
+  encryptionKey: "eric-esoa-subsystem-management-encryption-key"
+  scriptFileName: "obtain-kms-access.sh"
+  sipTlsTrustedRootTokenName: "eric-sec-sip-tls-trusted-root-cert"
+
+vault:
+  config:
+    host: "eric-sec-key-management"
+    port: "8200"
+    kubernetesUserRole: "kms-crypto-role-eric-esoa-subsystem-management"
+    kubernetesServiceAccountToken: "/var/run/secrets/kubernetes.io/serviceaccount/token"
+    kubernetesServiceAccountNamespace: "/var/run/secrets/kubernetes.io/serviceaccount/namespace"
+    sslTrustStoreFilePath: "/var/lib/ca-certificates/java-cacerts"
+
+security:
+  config:
+    mountPath: /app/config/
+    fileName: truststore.yaml
+  keystore:
+    path: ${java.io.tmpdir}/keystore.jks
+    keyStoreSecretName: eric-esoa-subsystem-management-int-cert
+    tlsCertDirectory: /var/run/secrets/eric-esoa-subsystem-management-int-cert/
+    tlsCertFile: tls.crt
+    tlsKeyFile: tls.key
+
+  truststore:
+    path: ${java.io.tmpdir}/truststore.jks
+    caCertDirectory: /var/run/secrets/truststore/
+    certificates:
+      - secretName: eric-sec-sip-tls-trusted-root-cert
+        fileName: ca.crt
+      - secretName: eric-pm-server-ca
+        fileName: client-cacertbundle.pem
+      - secretName: eric-bos-esoa-common-client-ca-secret
+        fileName: ca.crt
+
+  renewCertRetry:
+    delay: 10000
+    times: 6
+
+server:
+  max-http-header-size: 15KB
+
+portal:
+  proxyValue: eric-bos-esoa-platform-subsystem-manager-httpproxy

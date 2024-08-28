@@ -1,0 +1,12 @@
+{
+    "id": 1,
+    "type": "new-subsystemType",
+    "alias": "new",
+    "subtypes": [
+        {
+            "id": 2,
+            "name": "subtype",
+            "alias": "subtype"
+        }
+    ]
+}

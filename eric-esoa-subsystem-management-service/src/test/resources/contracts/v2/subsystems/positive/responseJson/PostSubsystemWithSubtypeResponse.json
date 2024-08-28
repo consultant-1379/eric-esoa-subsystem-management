@@ -1,0 +1,31 @@
+{
+    "id": 2,
+    "apiKey": "7da8bb76-07b5-497a-bfa0-8779b9f6387d",
+    "name": "auth",
+    "subsystemType": {
+        "id": 9,
+        "type": "AuthenticationSystems",
+        "alias": "Authentication systems",
+        "subtype": {
+            "id": 1,
+            "name": "Oauth2ClientCredentials",
+            "alias": "Oauth2 client credentials"
+        }
+    },
+    "url": "http://eric-eo-ecm-stub",
+    "connectionProperties": [
+        {
+            "id": 3,
+            "username": "administratoreeddd",
+            "password": "Z6bFUeOzeWki++Z+tpcVGw==",
+            "auth_url": "/auth/v1",
+            "auth_headers": "\"Content-Type\":\"application/json\"",
+            "auth_type": "Oauth2",
+            "client_id": "12131dd",
+            "client_secret": "xI54T6gzBLKqUAk9R6OJ/g==",
+            "grant_type": "2112",
+            "subsystemUsers": []
+        }
+    ],
+    "vendor": "Ericsson"
+}

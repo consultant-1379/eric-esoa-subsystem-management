@@ -1,0 +1,317 @@
+#
+# COPYRIGHT Ericsson 2023-2024
+#
+#
+#
+# The copyright to the computer program(s) herein is the property of
+#
+# Ericsson Inc. The programs may be used and/or copied only with written
+#
+# permission from Ericsson Inc. or in accordance with the terms and
+#
+# conditions stipulated in the agreement/contract under which the
+#
+# program(s) have been supplied.
+#
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "eric-esoa-so-library-chart.name" . }}
+  labels:
+  {{- include "eric-esoa-so-library-chart.labels" .| nindent 4 }}
+  annotations:
+  {{- include "eric-esoa-so-library-chart.annotations" .| nindent 4 }}
+spec:
+  {{- if eq .Values.autoScaling.enabled false }}
+  replicas: {{ include "eric-esoa-so-library-chart.replicas" . }}
+  {{- end }}
+  strategy:
+    type: {{ .Values.updateStrategy.type }}
+      {{- if and (eq .Values.updateStrategy.type "RollingUpdate") .Values.updateStrategy.rollingUpdate }}
+    rollingUpdate:
+{{ toYaml .Values.updateStrategy.rollingUpdate | trim | indent 6 }}
+    {{- end }}
+  selector:
+    matchLabels:
+      app: {{ template "eric-esoa-so-library-chart.name" . }}
+  template:
+    metadata:
+      annotations:
+      {{- include "eric-esoa-so-library-chart.annotations" .| nindent 8 }}
+      labels:
+        eric-sec-key-management-access: "true"
+      {{- include "eric-esoa-so-library-chart.labels" .| nindent 8 }}
+    spec:
+      terminationGracePeriodSeconds: {{ include "eric-esoa-so-library-chart.terminationGracePeriodSeconds" . }}
+      serviceAccountName: {{ template "eric-esoa-so-library-chart.name" . }}
+      {{- if  .Values.imageCredentials.pullSecret }}
+      imagePullSecrets:
+        - name: {{ .Values.imageCredentials.pullSecret | quote }}
+      {{- else if .Values.global.pullSecret }}
+      imagePullSecrets:
+        - name: {{ .Values.global.pullSecret | quote }}
+      {{- end }}
+      securityContext:
+        {{- include "eric-esoa-subsystem-management.seccomp-profile" . | indent 8 }}
+        fsGroup: {{ include "eric-esoa-subsystem-management.fsGroup.coordinated" . }}
+        supplementalGroups: {{ include "eric-esoa-subsystem-management.supplementalGroups" . }}
+      affinity:
+        podAntiAffinity:
+        {{- include "eric-esoa-so-library-chart.pod-anti-affinity-type" . | nindent 10 }}
+      containers:
+      - image: {{ template "eric-esoa-so-library-chart.imagePath" (dict "imageId" "mainImage" "values" .Values "files" .Files) }}
+        name: {{ template "eric-esoa-so-library-chart.name" . }}
+        lifecycle:
+          preStop:
+            exec:
+              command: [ "/bin/sleep", "20" ]
+        imagePullPolicy: {{ include "eric-esoa-subsystem-management.registryImagePullPolicy" . | quote }}
+        ports:
+        {{- if eq (include "eric-esoa-so-library-chart.global-security-tls-enabled" .) "true" }}
+        - name: https
+          containerPort: {{ .Values.port.https }}
+        {{- else }}
+        - name: http
+          containerPort: {{ .Values.port.http }}
+        {{- end }}
+        {{- if .Values.debug }}
+        - name: jvm-debug
+          containerPort: {{ .Values.port.jvmDebug }}
+        - name: jvm-jmx-remote
+          containerPort: {{ .Values.port.jvmJmxRemote }}
+        {{- end }}
+        env:
+        - name: SERVICE_ID
+          value: {{ .Chart.Name }}
+        - name: ESO_SECURITY_HOST
+          value: "{{ .Values.subsystemManagement.esoSecurity.host }}"
+        - name: EAI_ADAPTER_HOST
+          value: http://eai-adapter
+        - name: TOSCAO_HOST
+          value: http://toscao
+        - name: ECMSOL005_ADAPTER_HOST
+          value: {{ .Values.ecmSol005Adapter.host | default "eric-eo-ecmsol005-adapter" | quote }}
+        - name: DO_ADAPTER_HOST
+          value: {{ .Values.domainOrchAdapter.host | default "eric-oss-domain-orch-adapter" | quote }}
+        - name: PAYLOAD_USERNAME_KEY
+          value: preferred_username
+       {{- include "eric-esoa-so-library-chart.db-env-variables" . | nindent 8 }}
+        - name: BASELINE_ON_MIGRATE
+          value: {{ .Values.database.flyway.baseline.enabled | quote }}
+        - name: APP_NAME
+          value: {{ .Chart.Name }}
+        - name: KUBERNETES_MASTER
+          value: "kubernetes.default.svc"
+        - name: NFVO_LABEL
+          value: {{ .Values.subsystemManagement.nfvo.label | quote }}
+        - name: SOL005_ENABLED
+          value: {{ .Values.global.featureToggle.so.sol005Enabled | quote }}
+        - name: HTTP_CLIENT_CONNECTION_TIMEOUT
+          value: {{ .Values.client.connectionTimeout | default "30" | quote }}
+        - name: CLEANUP_TIMER_PERIOD
+          value: {{ .Values.checkConnectivity.cleanUpTimerPeriod | default "600" | quote }}
+        - name: REPORT_AGEING_TIME
+          value: {{ .Values.checkConnectivity.reportAgeingTime | default "900" | quote }}
+        - name: HTTP_CLIENT_READ_TIMEOUT
+          value: {{ .Values.client.readTimeout | default "30" | quote }}
+        - name: SERVER_MAX_HTTP_HEADER_SIZE
+          value: {{ index .Values.server "max-http-header-size" }}
+        - name: GRACEFUL_SHUTDOWN_TIMEOUT
+          value: {{ .Values.terminationGracePeriodSeconds | default "60" }}s
+        - name: AWAIT_TERMINATION_PERIOD
+          value: {{ .Values.awaitTerminationPeriodSeconds | default "60000" | quote }}
+        - name: SPRING_CONFIG_CUSTOM_LOCATIONS
+          value:  {{ .Values.security.config.mountPath }}{{ .Values.security.config.fileName }}
+        - name: SECURITY_SCHEME
+          {{- if eq (include "eric-esoa-so-library-chart.global-security-tls-enabled" .) "true" }}
+          value: "https"
+          {{- else }}
+          value: "http"
+          {{- end }}
+      {{- include "eric-esoa-so-library-chart.sip-tls-env-variables.v1" .| indent 8 }}
+        - name: DB_CONNECTION_MAX_LIFETIME
+          value: {{ index .Values "global" "db" "connection" "max-lifetime" | default "840000" | quote }}
+        - name: ADP_KMS_CACERT_FILE_PATH
+          value: {{ template "eric-esoa-subsystem-management.adp-kms-cacert.file-location" . }}
+      {{- include "eric-esoa-so-library-chart.loggingEnvVariables" .| indent 4 }}
+        resources: {{ include "eric-esoa-so-library-chart.resourceRequestsAndLimits" (dict "Values" .Values "resourceName" "eric-esoa-subsystem-management") | nindent 10 }}
+        readinessProbe:
+          {{- if eq (include "eric-esoa-so-library-chart.global-security-tls-enabled" .) "true" }}
+          exec:
+            command:
+              - sh
+              - -c
+              - curl --cacert {{ .Values.security.truststore.caCertDirectory }}eric-sec-sip-tls-trusted-root-cert/ca.crt --cert {{ .Values.security.keystore.tlsCertDirectory }}tls.crt --key {{ .Values.security.keystore.tlsCertDirectory }}tls.key "https://localhost:{{ .Values.port.https }}{{ index .Values "probes" "eric-esoa-subsystem-management" "readinessProbe" "httpGet" "path" }}"
+          {{- else }}
+          {{- with index .Values "probes" "eric-esoa-subsystem-management" "readinessProbe" }}
+          httpGet:
+            path: {{ .httpGet.path | quote }}
+            port: {{ .httpGet.port }}
+         {{- end }}
+         {{- end }}
+         {{- with index .Values "probes" "eric-esoa-subsystem-management" "readinessProbe" }}
+          initialDelaySeconds: {{ .initialDelaySeconds }}
+          periodSeconds: {{ .periodSeconds }}
+          timeoutSeconds: {{ .timeoutSeconds }}
+          failureThreshold: {{ .failureThreshold }}
+          successThreshold: {{ .successThreshold }}
+         {{- end }}
+        livenessProbe:
+          {{- if eq (include "eric-esoa-so-library-chart.global-security-tls-enabled" .) "true" }}
+          exec:
+            command:
+              - sh
+              - -c
+              - curl --cacert {{ .Values.security.truststore.caCertDirectory }}eric-sec-sip-tls-trusted-root-cert/ca.crt --cert {{ .Values.security.keystore.tlsCertDirectory }}tls.crt --key {{ .Values.security.keystore.tlsCertDirectory }}tls.key "https://localhost:{{ .Values.port.https }}{{ index .Values "probes" "eric-esoa-subsystem-management" "livenessProbe" "httpGet" "path" }}"
+          {{- else }}
+          {{- with index .Values "probes" "eric-esoa-subsystem-management" "livenessProbe" }}
+          httpGet:
+            path: {{ .httpGet.path | quote }}
+            port: {{ .httpGet.port }}
+          {{- end }}
+          {{- end }}
+          {{- with index .Values "probes" "eric-esoa-subsystem-management" "livenessProbe" }}
+          initialDelaySeconds: {{ .initialDelaySeconds }}
+          periodSeconds: {{ .periodSeconds }}
+          timeoutSeconds: {{ .timeoutSeconds }}
+          failureThreshold: {{ .failureThreshold }}
+          {{- end }}
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+          runAsNonRoot: true
+          runAsUser: 186362
+          capabilities:
+            drop:
+              - all
+        volumeMounts:
+          - name: log-control-config
+            mountPath: /logcontrol
+          - name: tmp
+            mountPath: /tmp
+          - name: {{ template "eric-esoa-subsystem-management.kms-certificate-cacert-volume.name" . }}
+            mountPath: {{ template "eric-esoa-subsystem-management.adp-kms-certificate.volume-location" . }}
+            readOnly: true
+          - name: {{ template "eric-esoa-subsystem-management.service-account-secret.name" . }}
+            mountPath: {{ template "eric-esoa-subsystem-management.service-account-secret.file-location" . }}
+            readOnly: true
+          - name: {{ template "eric-esoa-subsystem-management.adp-kms-access-config-map-volume.name" . }}
+            mountPath: /{{ template "eric-esoa-subsystem-management.adp-kms-access-config-map-volume.name" . }}
+        {{- include "eric-esoa-so-library-chart.sip-tls-volume-mounts.v1" .| indent 10 }}
+        {{- include "eric-esoa-so-library-chart.edb-server-cert-volume-mount" . | indent 10 }}
+        {{- include "eric-esoa-so-library-chart.edb-driver-volume-mount" . | nindent 10 }}
+        {{- if eq "true" ( include "eric-esoa-so-library-chart.is-it-mtls" .) }}
+        {{- include "eric-esoa-so-library-chart.edb-client-cert-volume-mount" . | nindent 10 }}
+        {{- end }}
+
+      initContainers:
+      {{- if eq ( include "eric-esoa-so-library-chart.value-db-vendor" . ) "edb" -}}
+      {{- include "eric-esoa-so-library-chart.edb-driver-init-container" . | indent 8 }}
+          resources: {{ include "eric-esoa-so-library-chart.resourceRequestsAndLimits" (dict "Values" .Values "resourceName" "eric-esoa-subsystem-management") | nindent 10 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            runAsNonRoot: true
+            runAsUser: 186362
+            capabilities:
+              drop:
+                - all
+      {{- end }}
+      {{- if .Values.global.createDB -}}
+      {{- include "eric-esoa-subsystem-management.create-database-init-container" . | indent 8 }}
+          resources: {{ include "eric-esoa-so-library-chart.resourceRequestsAndLimits" (dict "Values" .Values "resourceName" "eric-esoa-subsystem-management") | nindent 10 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            runAsNonRoot: true
+            runAsUser: 186362
+            capabilities:
+              drop:
+                - all
+      {{- end }}
+        - name: obtain-kms-access
+          image: {{ template "eric-esoa-so-library-chart.imagePath" (dict "imageId" "kmsSetupInitContainer" "values" .Values "files" .Files) }}
+          imagePullPolicy: {{ template "eric-esoa-subsystem-management.registryImagePullPolicy" . }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            runAsNonRoot: true
+            runAsUser: 186362
+            capabilities:
+              drop:
+                - all
+          env:
+            - name: ADP_KMS_ADMIN_ACCOUNT_NAME
+              value: {{ template "eric-esoa-subsystem-management.kms-admin-account.name" . }}
+            - name: ADP_KMS_CACERT_FILE_PATH
+              value: {{ template "eric-esoa-subsystem-management.adp-kms-cacert.file-location" . }}
+            - name: ADP_KMS_ENCRYPTION_KEY_NAME
+              value: {{ .Values.kms.encryptionKey }}
+            - name: SUBSYSTEM_MANAGER_SERVICE_ACCOUNT_NAME
+              value: {{ template "eric-esoa-subsystem-management.service-account.name" . }}
+            - name: SUBSYSTEM_MANAGER_SERVICE_ACCOUNT_SECRET_NAME
+              value: {{ template "eric-esoa-subsystem-management.service-account-secret.name" . }}
+            - name: SUBSYSTEM_MANAGER_SERVICE_ACCOUNT_TOKEN
+              value: {{ .Values.vault.config.kubernetesServiceAccountToken | quote }}
+            - name: SUBSYSTEM_MANAGER_SERVICE_ACCOUNT_NAMESPACE
+              value: {{ .Values.vault.config.kubernetesServiceAccountNamespace | quote }}
+            - name: VAULT_HOST
+              value: {{ .Values.vault.config.host | quote }}
+            - name: VAULT_PORT
+              value: {{ .Values.vault.config.port | quote }}
+            - name: TRUST_STORE_FILE_LOCATION
+              value: {{ .Values.vault.config.sslTrustStoreFilePath | quote }}
+            - name: VAULT_USER_ROLE
+              value: {{ .Values.vault.config.kubernetesUserRole | quote }}
+          command: [ "sh", "-c", "/bin/bash /{{ template "eric-esoa-subsystem-management.adp-kms-access-config-map-volume.name" . }}/{{ template "eric-esoa-subsystem-management.obtain-kms-access-script.file-name" . }}" ]
+          volumeMounts:
+            - name: {{ template "eric-esoa-subsystem-management.kms-certificate-cacert-volume.name" . }}
+              mountPath: {{ template "eric-esoa-subsystem-management.adp-kms-certificate.volume-location" . }}
+            - name: {{ template "eric-esoa-subsystem-management.kms-admin-account.name" . }}
+              mountPath: {{ template "eric-esoa-subsystem-management.adp-kms-admin-account.file-location" . }}
+            - name: {{ template "eric-esoa-subsystem-management.service-account-secret.name" . }}
+              mountPath: {{ template "eric-esoa-subsystem-management.service-account-secret.file-location" . }}
+            - name: {{ template "eric-esoa-subsystem-management.adp-kms-access-config-map-volume.name" . }}
+              mountPath: /{{ template "eric-esoa-subsystem-management.adp-kms-access-config-map-volume.name" . }}
+      {{- if .Values.tolerations }}
+      tolerations: {{- include "eric-esoa-so-library-chart.tolerations" . | indent 8 }}
+      {{- end }}
+      {{- if .Values.topologySpreadConstraints }}
+      topologySpreadConstraints: {{- include "eric-esoa-so-library-chart.topologySpreadConstraints" . | indent 8 }}
+      {{- end }}
+      nodeSelector: {{ include "eric-esoa-so-library-chart.nodeSelector" . | nindent 8 -}}
+
+      {{ if (index .Values.podPriority "eric-esoa-subsystem-management" "priorityClassName") }}
+      priorityClassName: {{index .Values.podPriority "eric-esoa-subsystem-management" "priorityClassName" | quote }}
+      {{ end }}
+
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: log-control-config
+          configMap:
+            name: {{ include "eric-esoa-so-library-chart.name" . }}-log-config
+        - name: {{ template "eric-esoa-subsystem-management.kms-certificate-cacert-volume.name" . }}
+          secret:
+            secretName: {{ template "eric-esoa-subsystem-management.sip-tls-root-token.name" . }}
+            items:
+              - key: {{ template "eric-esoa-subsystem-management.kms-certificate-cacert-key.name" . }}
+                path: {{ template "eric-esoa-subsystem-management.kms-certificate-cacert-key.filepath" . }}
+        - name: {{ template "eric-esoa-subsystem-management.service-account-secret.name" . }}
+          secret:
+            secretName: {{ template "eric-esoa-subsystem-management.service-account-secret.name" . }}
+        - name: {{ template "eric-esoa-subsystem-management.adp-kms-access-config-map-volume.name" . }}
+          configMap:
+            name: {{ template "eric-esoa-subsystem-management.adp-kms-access-config-map.name" . }}
+        - name: {{ template "eric-esoa-subsystem-management.kms-admin-account.name" . }}
+          secret:
+            secretName: {{ template "eric-esoa-subsystem-management.kms-admin-account.name" . }}
+      {{- include "eric-esoa-so-library-chart.sip-tls-volumes.v1" .| indent 8 }}
+      {{- include "eric-esoa-so-library-chart.edb-driver-volume" . | indent 8}}
+      {{- include "eric-esoa-so-library-chart.edb-server-cert-volume" . | indent 8 }}
+      {{- if eq "true" ( include "eric-esoa-so-library-chart.is-it-mtls" . ) -}}
+      {{- include "eric-esoa-so-library-chart.edb-client-cert-volume" . | nindent 8 }}
+      {{- include "eric-esoa-subsystem-management.pg-dba-client-cert-volume" . | nindent 8 }}
+      {{- end }}

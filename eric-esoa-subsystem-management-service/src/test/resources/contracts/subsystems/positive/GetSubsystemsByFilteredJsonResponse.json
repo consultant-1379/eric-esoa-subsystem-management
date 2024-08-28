@@ -1,0 +1,34 @@
+[
+    {
+        "id":"10",
+        "name":"subsystem-10",
+        "subsystemType":{
+            "id":2,
+            "type":"NFVO"
+        }
+    },
+    {
+        "id":"15",
+        "name":"subsystem-15",
+        "subsystemType":{
+            "id":5,
+            "type":"PhysicalDevice"
+        }
+    },
+    {
+        "id":"2",
+        "name":"subsystem-2",
+        "subsystemType":{
+            "id":5,
+            "type":"PhysicalDevice"
+        }
+    },
+    {
+        "id":"4",
+        "name":"subsystem-4",
+        "subsystemType":{
+            "id":5,
+            "type":"PhysicalDevice"
+        }
+    }
+]

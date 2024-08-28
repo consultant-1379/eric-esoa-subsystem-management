@@ -1,0 +1,54 @@
+# Eclipse files
+bin/
+.settings/
+.metadata/
+.project
+.classpath
+.factorypath
+.springBeans
+
+# IntelliJ files
+out/
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Compiled class files
+*.class
+
+# Package files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+
+# Build and other output files
+target/
+reports/
+helm-home/
+helm-target/
+.m2/
+*.out
+*.log
+
+# PMD reports
+*.pmd
+
+# Git merge files
+*.orig
+
+
+# Archetype support files
+install_bob.sh
+run.sh
+
+# Chart files
+charts/**/design-rule-check-report*
+
+# Helm
+charts/*/charts/
+charts/*/Chart.lock

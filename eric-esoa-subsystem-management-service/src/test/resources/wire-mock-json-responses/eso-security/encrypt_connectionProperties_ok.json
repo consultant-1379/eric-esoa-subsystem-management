@@ -1,0 +1,19 @@
+	{
+		"request": {
+			"method": "GET",
+			"url": "/credentialsmanager/v1.0/selfservice?ConnectionProperties=%255B%257B%2522username%2522:%2522validUser%2522,%2522password%2522:%2522secr3t%2522,%2522location%2522:%2522http://somewhere.com%2522%257D%255D"
+		},
+		"response": {
+			"status": 200,
+			"jsonBody": {
+				"errorMessage": "N/A",
+				"httpStatusCode": "200",
+				"dateTimeOfExecution": "2018-08-17T09:41:34.735",
+				"callerContext": "Remote Addr: 172.18.0.18",
+				"connectionProperties": "jVu+iHStg55YhFUXDhjO2xOV2JkzVo0q0BaKHyNBLr7Do903jr9ZNj6LloyPrW8I"
+			},
+			"headers": {
+				"content-Type": "application/json"
+			}
+		}
+	}

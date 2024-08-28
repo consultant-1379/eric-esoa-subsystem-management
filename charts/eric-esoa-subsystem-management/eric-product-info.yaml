@@ -1,0 +1,31 @@
+productName: ESOA Subsystem-Management Service
+productNumber: CXD 000 0000
+images:
+  mainImage:
+    productName: ESOA Subsystem-Management Service
+    productNumber: CXU 001 0000
+    registry: armdocker.rnd.ericsson.se
+    repoPath: REPO_PATH
+    name: eric-esoa-subsystem-management
+    tag: IMAGE_TAG
+  iamClient:
+    productName: Identity Access Management Client
+    productNumber: CXA 301 140
+    registry: armdocker.rnd.ericsson.se
+    repoPath: proj-esoa-so
+    name: eric-esoa-iam-client
+    tag: 1.0.0-51
+  pgInitContainer:
+    productName: Document Database PG
+    productNumber: ''
+    registry: armdocker.rnd.ericsson.se
+    repoPath: proj-esoa-so
+    name: postgresql13
+    tag: 1.3.0-1
+  kmsSetupInitContainer:
+    productName: ''
+    productNumber: ''
+    registry: armdocker.rnd.ericsson.se
+    repoPath: proj-esoa-so
+    name: so-base
+    tag: 1.3.0-1

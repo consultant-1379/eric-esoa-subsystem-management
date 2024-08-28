@@ -1,0 +1,22 @@
+{
+    "id": 1,
+    "type": "new-subsystemType",
+    "alias": "new",
+    "subtypes": [
+        {
+            "id": 2,
+            "name": "subtype1",
+            "alias": "subtype1"
+        },
+        {
+            "id": 3,
+            "name": "subtype2",
+            "alias": "subtype2"
+        },
+        {
+            "id": 4,
+            "name": "subtype3",
+            "alias": "subtype3"
+        }
+    ]
+}

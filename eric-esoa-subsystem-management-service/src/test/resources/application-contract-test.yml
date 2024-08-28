@@ -1,0 +1,65 @@
+#
+# COPYRIGHT Ericsson 2023-2024
+#
+#
+#
+# The copyright to the computer program(s) herein is the property of
+#
+# Ericsson Inc. The programs may be used and/or copied only with written
+#
+# permission from Ericsson Inc. or in accordance with the terms and
+#
+# conditions stipulated in the agreement/contract under which the
+#
+# program(s) have been supplied.
+#
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:test;MODE=PostgreSQL;NON_KEYWORDS=KEY,VALUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE
+    username: postgres
+    password: postgres
+
+  flyway:
+    locations: ${MIGRATION_PATH:classpath:db/migration/common}
+    baselineOnMigrate: ${BASELINE_ON_MIGRATE:false}
+    out-of-order: true
+    validateOnMigrate: false
+
+  jpa:
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+        id:
+          new_generator_mappings: false
+          db_structure_naming_strategy: legacy
+
+    hibernate:
+      ddl-auto: none
+
+    properties.hibernate:
+      show-sql: true
+      format_sql: true
+      use_sql_comments: false
+
+paths:
+  subsystem-management:
+    base-path: /subsystem-manager/v1
+
+---
+
+logging:
+  level:
+    com.ericsson.oss.so.service.subsystemsmanager: DEBUG   # Parent package of this project
+
+---
+
+featuretoggle:
+  features:
+    sol005: ${SOL005_ENABLED:false}
+
+---
